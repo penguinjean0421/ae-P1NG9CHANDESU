@@ -12,13 +12,21 @@ class TicketCloseView(discord.ui.View):
     @discord.ui.button(label="티켓 닫기 🔒", style=discord.ButtonStyle.danger,  custom_id="close_ticket_btn")
     async def close_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
         channel = interaction.channel
+        guild = interaction.guild
 
         try:
             await interaction.message.delete()
         except:
             pass 
 
-        await channel.edit(name=f"closed-{channel.name}")
+        closed_category = discord.utils.get(guild.categories, name="closed")
+        if not closed_category:
+            try:
+                closed_category = await guild.create_category(name="closed")
+            except discord.Forbidden:
+                closed_category = None
+
+        await channel.edit(name=f"closed-{channel.name}", category=closed_category)
 
         for member in channel.members:
             if not member.guild_permissions.administrator and not member.bot:
@@ -40,7 +48,8 @@ class TicketView(discord.ui.View):
     async def open_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
         ticket_cog = self.bot.get_cog('Ticket')
         if ticket_cog:
-            channel = await ticket_cog.open_ticket_logic(interaction.guild, interaction.user)
+            panel_category = interaction.channel.category
+            channel = await ticket_cog.open_ticket_logic(interaction.guild, interaction.user, panel_category)
             await interaction.response.send_message(f"티켓이 생성되었습니다: {channel.mention}", ephemeral=True)
         else:
             await interaction.response.send_message("티켓 시스템에 오류가 발생했습니다.", ephemeral=True)
@@ -99,7 +108,7 @@ class Ticket(commands.Cog):
             await logger.send_log(message.guild, embed, type="ticket")
             return
 
-    async def open_ticket_logic(self, guild, user):
+    async def open_ticket_logic(self, guild, user, category=None):
         settings_cog = self.bot.get_cog('Settings')
         
         if settings_cog:
@@ -121,6 +130,7 @@ class Ticket(commands.Cog):
 
         channel = await guild.create_text_channel(
             name=ticket_name,
+            category=category,
             overwrites=overwrites,
             reason=f"티켓 생성 (사용자: {user})"
         )
@@ -164,7 +174,16 @@ class Ticket(commands.Cog):
                 await self.bot.wait_for('message', check=check, timeout=300.0)
             except asyncio.TimeoutError:
                 if channel.name.startswith("ticket-"):
-                    await channel.edit(name=f"closed-{channel.name}")
+                    guild = channel.guild
+                    
+                    closed_category = discord.utils.get(guild.categories, name="closed")
+                    if not closed_category:
+                        try:
+                            closed_category = await guild.create_category(name="closed")
+                        except:
+                            closed_category = None
+
+                    await channel.edit(name=f"closed-{channel.name}", category=closed_category)
                     for member in channel.members:
                         if not member.guild_permissions.administrator and not member.bot:
                             await channel.set_permissions(member, overwrite=None)
@@ -193,7 +212,7 @@ class Ticket(commands.Cog):
     @commands.command(name="open")
     async def open_ticket_cmd(self, ctx):
         """!open 명령어로 티켓 생성"""
-        channel = await self.open_ticket_logic(ctx.guild, ctx.author)
+        channel = await self.open_ticket_logic(ctx.guild, ctx.author, ctx.channel.category)
         embed = discord.Embed(
             description=f"✅ 티켓이 생성되었습니다: {channel.mention}",
             color=0x808080
