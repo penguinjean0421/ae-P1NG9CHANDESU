@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Unit test / coverage reports
+.coverage
+.cache
+.pytest_cache/
+
+# Environments (Virtual Environments)
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+
+# MyPy / Ruff
+.mypy_cache/
+.ruff_cache/
+
+# VS Code / IDE settings
+.vscode/
+.idea/
+
+# Discord.py & Bot Logs
+*.log
+
+# Sever Channel
+config.json
+spam_ban.json
+temp_channels.json
+
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows OS
+Thumbs.db
+desktop.ini

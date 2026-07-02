@@ -1,0 +1,42 @@
+{
+    "aespa_data": {
+        "aespa": {
+            "emoji": "💜",
+            "aespa_exhibition": "aespaexhibition",
+            "aespa_week": "aespa_WEEK",
+            "bilibili": "2128487337",
+            "douyin": "h5ANeSK5EN8",
+            "facebook": "aespa.offical",
+            "homepage": "aespa.com",
+            "homepagejp": "aespa-official.jp",
+            "instagram": "aespa_official",
+            "line": "281sdymu", 
+            "pinterest": "myrichclub",
+            "snapchat": "aespa.offical",
+            "tiktok": "@aespa_official",
+            "twitter": "aespa_official",
+            "twitterjp": "aespaJPofficial",
+            "weibo": "7479199632",
+            "weverse": "aespa",
+            "xiaohongshu": "684e9fae000000001b0229c4",
+            "youtube": "@aespa"
+        },
+        "karina": {
+            "emoji": "💙",
+            "instagram": "katarinabluu"
+        },
+        "giselle": {
+            "emoji": "🌙",
+            "instagram": "aerichandesu"
+        },
+        "winter": {
+            "emoji": "⭐️",
+            "instagram": "imwinter"
+        },
+        "ningning": {
+            "emoji": "🦋",
+            "instagram": "imnotningning",
+            "weibo": "7842391335"
+        }
+    }
+}
