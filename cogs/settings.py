@@ -9,7 +9,7 @@ class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         base_path = os.path.dirname(os.path.abspath(__file__))
-        self.config_file = os.path.join(base_path, "..", "config.json")
+        self.config_file = os.path.join(base_path, "..", "data/config.json")
         self.server_configs = {}
         self.load_config()
 
