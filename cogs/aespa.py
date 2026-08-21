@@ -52,8 +52,13 @@ class Aespa(commands.Cog) :
             embed.add_field(name = "Weibo", value = f"[바로가기](https://weibo.com/u/{data['weibo']})", inline = False)            
             embed.add_field(name = "Youtube", value = f"[바로가기](https://www.youtube.com/{data['youtube']})", inline = False)
 
-        elif name in ["karina", "giselle", "winter"] : 
+        elif name in ["karina", "giselle"] : 
             embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
+
+        elif name in ["karina", "giselle"] : 
+            embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
+            embed.add_field(name = "Pponyo's Instagram", value = f"[바로가기](https://www.instagram.com/{data['pponyo']})", inline = False)
+
 
         elif name == "ningning" :
             embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
