@@ -2,6 +2,7 @@ import json
 import os
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 class Aespa(commands.Cog) :
@@ -15,7 +16,7 @@ class Aespa(commands.Cog) :
             data = json.load(f)
         self.aespa_data=data['aespa_data']
     
-    async def send_aespa(self, ctx):
+    async def send_aespa(self, interaction: discord.Interaction):
         data = self.aespa_data['aespa']
         embed = discord.Embed(title = f"{data['emoji']} Be my æ, aespa's SNS", color =0x9ceafe)
 
@@ -38,9 +39,9 @@ class Aespa(commands.Cog) :
         embed.add_field(name = "Xiaohongshu", value = f"[바로가기](https://www.xiaohongshu.com/user/profile/{data['xiaohongshu']})", inline = False)
         embed.add_field(name = "Youtube", value = f"[바로가기](https://www.youtube.com/@{data['youtube']})", inline = False)
 
-        await ctx.send(embed = embed)
+        await interaction.response.send_message(embed=embed)
 
-    async def send_sns(self, ctx, name):
+    async def send_sns(self, interaction: discord.Interaction, name):
         data = self.aespa_data[name]
         embed = discord.Embed(title = f"{data['emoji']} Be my æ, {name}'s SNS", color =0xc88ddd)
 
@@ -55,37 +56,36 @@ class Aespa(commands.Cog) :
         elif name in ["karina", "giselle"] : 
             embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
 
-        elif name in ["karina", "giselle"] : 
+        elif name in ["winter"] : 
             embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
             embed.add_field(name = "Pponyo's Instagram", value = f"[바로가기](https://www.instagram.com/{data['pponyo']})", inline = False)
-
 
         elif name == "ningning" :
             embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
             embed.add_field(name = "Weibo", value = f"[바로가기](https://weibo.com/u/{data['weibo']})", inline = False)
 
-        await ctx.send(embed = embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command(name = "aespa", aliases = ['에스파'])
-    async def aespa(self, ctx):
-        # await self.send_aespa(ctx)
-        await self.send_sns(ctx, "aespa")
+    @app_commands.command(name = "aespa", description="aespa's SNS")
+    async def aespa(self, interaction: discord.Interaction):
+        # await self.send_aespa(interaction)
+        await self.send_sns(interaction, "aespa")
 
-    @commands.command(name = "karina", aliases = ['카리나'])
-    async def karina(self, ctx) :
-        await self.send_sns(ctx, "karina")
+    @app_commands.command(name = "karina", description="KARINA's SNS")
+    async def karina(self, interaction: discord.Interaction) :
+        await self.send_sns(interaction, "karina")
 
-    @commands.command(name = "giselle", aliases = ['지젤'])
-    async def giselle(self, ctx) :
-        await self.send_sns(ctx, "giselle")
+    @app_commands.command(name = "giselle", description="GISELLE's SNS")
+    async def giselle(self, interaction: discord.Interaction) :
+        await self.send_sns(interaction, "giselle")
 
-    @commands.command(name = "winter", aliases = [ '윈터'])
-    async def winter(self, ctx) :
-        await self.send_sns(ctx, "winter")
+    @app_commands.command(name = "winter", description="WINTER's SNS")
+    async def winter(self, interaction: discord.Interaction) :
+        await self.send_sns(interaction, "winter")
 
-    @commands.command(name = "ningning", aliases = ['닝닝'])
-    async def ningning(self, ctx) :
-        await self.send_sns(ctx, "ningning")
+    @app_commands.command(name = "ningning", description="NINGNING's SNS")
+    async def ningning(self, interaction: discord.Interaction) :
+        await self.send_sns(interaction, "ningning")
 
 async def setup(bot) :
     await bot.add_cog(Aespa(bot))

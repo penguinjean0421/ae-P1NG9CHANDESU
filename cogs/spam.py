@@ -156,7 +156,7 @@ class Spam(commands.Cog):
                             "**기간:** 1시간"
                             ),
                         color=0x808080
-                    )
+                        )
                     embed.set_thumbnail(url=member.display_avatar.url)
                     embed.add_field(name="해제 예정 시간", value=f"<t:{int(timeout_until.timestamp())}:F>", inline=False)
                     await logger.send_log(guild, embed, type="punish")

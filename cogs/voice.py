@@ -1,4 +1,5 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
 import json
 import os
@@ -66,13 +67,14 @@ class Voice(commands.Cog):
                     move_members=True,
                     mute_members=True
                 )
+
             }
 
             new_channel = await guild.create_voice_channel(
                 name=f"🎙️ {member.display_name}의 방",
                 category=category,
                 overwrites=overwrites
-            )
+                )
 
             if gid_str not in self.temp_channels:
                 self.temp_channels[gid_str] = {}
@@ -86,7 +88,7 @@ class Voice(commands.Cog):
                 title="🔨 음성 채널 생성",
                 description=f"**방장:** {member.mention} ({member})\n**채널:** {new_channel.mention}",
                 color=0x808080
-            )
+                )
             await self.log_event(guild, embed)
 
         if before.channel:
@@ -111,7 +113,7 @@ class Voice(commands.Cog):
                         title="🧹 빈 채널이 되어 자동으로 삭제되었습니다.",
                         description=f"**방장:** {creator_text}\n**채널명:** `{chn_name}`",
                         color=0x808080
-                    )
+                        )
                     await self.log_event(guild, embed)
 
                 except discord.NotFound:
@@ -121,68 +123,68 @@ class Voice(commands.Cog):
                             del self.temp_channels[gid_str]
                         self.save_temp_channels()
 
-    @commands.command(name="named", aliases=["이름"])
-    async def change_name(self, ctx, *, new_name: str):
-        """방장이 자신이 속한 음성 채널의 이름을 변경합니다."""
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            return await ctx.send("❌ 먼저 변경할 음성 채널에 입장해 주세요.", delete_after=3)
+    @app_commands.command(name="음성방이름", description="자신이 방장인 임시 음성 채널의 이름을 변경합니다.")
+    @app_commands.describe(new_name="변경할 채널 이름")
+    async def change_name(self, interaction: discord.Interaction, new_name: str):
+        if not interaction.user.voice or not interaction.user.voice.channel:
+            return await interaction.response.send_message("❌ 먼저 변경할 음성 채널에 입장해 주세요.", ephemeral=True)
 
-        voice_channel = ctx.author.voice.channel
-        creator_id = self._get_creator_id(ctx.guild.id, voice_channel.id)
+        voice_channel = interaction.user.voice.channel
+        creator_id = self._get_creator_id(interaction.guild.id, voice_channel.id)
 
         if not creator_id:
-            return await ctx.send("❌ 이 채널은 이름을 변경할 수 있는 채널이 아닙니다.", delete_after=3)
+            return await interaction.response.send_message("❌ 이 채널은 이름을 변경할 수 있는 채널이 아닙니다.", ephemeral=True)
 
-        if creator_id != ctx.author.id:
-            return await ctx.send("❌ 방장만 채널 이름을 변경할 수 있습니다.", delete_after=3)
+        if creator_id != interaction.user.id:
+            return await interaction.response.send_message("❌ 방장만 채널 이름을 변경할 수 있습니다.", ephemeral=True)
 
         old_name = voice_channel.name
 
         await voice_channel.edit(name=new_name)
-        await ctx.send(f"✅ 음성 채널 이름이 `{new_name}`(으)로 변경되었습니다.", delete_after=3)
+        await interaction.response.send_message(f"✅ 음성 채널 이름이 `{new_name}`(으)로 변경되었습니다.", ephemeral=True)
 
         embed = discord.Embed(
             title="✏️ 채널 이름 변경",
-            description=f"**변경자:** {ctx.author.mention}\n**채널:** {voice_channel.mention}",
+            description=f"**변경자:** {interaction.user.mention}\n**채널:** {voice_channel.mention}",
             color=0x808080
-        )
+            )
         embed.add_field(name="변경 전", value=f"`{old_name}`", inline=True)
         embed.add_field(name="변경 후", value=f"`{new_name}`", inline=True)
-        await self.log_event(ctx.guild, embed)
+        await self.log_event(interaction.guild, embed)
 
-    @commands.command(name="limit", aliases=["인원"])
-    async def change_limit(self, ctx, limit: int):
-        """방장이 자신이 속한 음성 채널의 인원 제한을 변경합니다. (0은 무제한)"""
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            return await ctx.send("❌ 먼저 변경할 음성 채널에 입장해 주세요.", delete_after=3)
+    @app_commands.command(name="음성방인원", description="자신이 방장인 임시 음성 채널의 인원 제한을 변경합니다. (0은 무제한)")
+    @app_commands.describe(limit="설정할 인원 수 (0 ~ 99)")
+    async def change_limit(self, interaction: discord.Interaction, limit: int):
+        if not interaction.user.voice or not interaction.user.voice.channel:
+            return await interaction.response.send_message("❌ 먼저 변경할 음성 채널에 입장해 주세요.", ephemeral=True)
 
-        voice_channel = ctx.author.voice.channel
-        creator_id = self._get_creator_id(ctx.guild.id, voice_channel.id)
+        voice_channel = interaction.user.voice.channel
+        creator_id = self._get_creator_id(interaction.guild.id, voice_channel.id)
 
         if not creator_id:
-            return await ctx.send("❌ 이 채널은 인원을 변경할 수 있는 임시 채널이 아닙니다.", delete_after=3)
+            return await interaction.response.send_message("❌ 이 채널은 인원을 변경할 수 있는 임시 채널이 아닙니다.", ephemeral=True)
         
-        if creator_id != ctx.author.id:
-            return await ctx.send("❌ 방장만 인원 제한을 변경할 수 있습니다.", delete_after=3)
+        if creator_id != interaction.user.id:
+            return await interaction.response.send_message("❌ 방장만 인원 제한을 변경할 수 있습니다.", ephemeral=True)
 
         if limit < 0 or limit > 99:
-            return await ctx.send("❌ 인원 제한은 0(무제한)에서 99명 사이로 설정해 주세요.", delete_after=3)
+            return await interaction.response.send_message("❌ 인원 제한은 0(무제한)에서 99명 사이로 설정해 주세요.", ephemeral=True)
 
         old_limit = voice_channel.user_limit
         old_limit_text = "무제한" if old_limit == 0 else f"{old_limit}명"
 
         await voice_channel.edit(user_limit=limit)
         limit_text = "무제한" if limit == 0 else f"{limit}명"
-        await ctx.send(f"✅ 음성 채널 인원 제한이 `{limit_text}`(으)로 변경되었습니다.", delete_after=3)
+        await interaction.response.send_message(f"✅ 음성 채널 인원 제한이 `{limit_text}`(으)로 변경되었습니다.", ephemeral=True)
 
         embed = discord.Embed(
             title="👥 임시 채널 인원 설정 변경",
-            description=f"**변경자:** {ctx.author.mention}\n**채널:** {voice_channel.mention}",
-            color=0x3498DB
-        )
+            description=f"**변경자:** {interaction.user.mention}\n**채널:** {voice_channel.mention}",
+            color=0x808080
+            )
         embed.add_field(name="변경 전", value=f"`{old_limit_text}`", inline=True)
         embed.add_field(name="변경 후", value=f"`{limit_text}`", inline=True)
-        await self.log_event(ctx.guild, embed)
+        await self.log_event(interaction.guild, embed)
 
 
 async def setup(bot):
