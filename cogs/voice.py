@@ -71,7 +71,7 @@ class Voice(commands.Cog):
             }
 
             new_channel = await guild.create_voice_channel(
-                name=f"🎙️ {member.display_name}의 방",
+                name=f"🎙️ {member.display_name}의 음성채널",
                 category=category,
                 overwrites=overwrites
                 )
