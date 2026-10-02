@@ -1,6 +1,5 @@
 import json
 import os
-import re
 
 import discord
 from discord import app_commands
@@ -89,6 +88,47 @@ class Settings(commands.Cog):
                 pass
             except Exception as e:
                 print(f"패널 삭제 오류: {e}")
+
+    @app_commands.command(name="check", description="현재 서버의 설정 상태를 확인합니다.")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def check_settings(self, interaction: discord.Interaction):
+        gid = str(interaction.guild.id)
+        config = self.get_server_data(interaction.guild)
+
+        embed = discord.Embed(
+            title= f"{interaction.guild.name} 서버 설정 현황",
+            description="현재 서버에 구성된 채널 및 기능 설정 상태입니다.",
+            color=0x808080
+        )
+
+        name_mapping = {
+            "spam_filter_channel_id": "스팸 필터 채널",
+            "create_voice_channel_id": "음성 생성 채널",
+            "server_log_channel_id": "서버 로그 채널",
+            "punish_log_channel_id": "처벌 로그 채널",
+            "ticket_log_channel_id": "티켓 로그 채널",
+            "command_channel_id": "봇 명령어 채널",
+            "emoji_command_channel_id": "이모지 명령어 채널",
+            "ticket_panel_channel_id": "티켓 패널 채널"
+        }
+
+        fields_added = 0
+        for key, value in config.items():
+            if key.endswith("_id") and key in name_mapping:
+                field_name = name_mapping[key]
+                
+                if value:
+                    field_value = f"<#{value}>"
+                else:
+                    field_value = "설정되지 않음"
+                
+                embed.add_field(name=field_name, value=field_value, inline=False)
+                fields_added += 1
+
+        if fields_added == 0:
+            embed.description = "설정된 항목이 없습니다. `/set` 명령어로 설정을 진행해주세요."
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     # --- /set 명령어 그룹 ---
     set_group = app_commands.Group(name="set", description="서버 설정을 구성합니다.")
