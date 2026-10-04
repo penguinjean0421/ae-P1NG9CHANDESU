@@ -1,0 +1,17 @@
+{
+    "YOUR_SERVER_ID_HERE": {
+        "server_name": "Example Server Name",
+        "owner_id": 0,
+        "owner_name": "owner_username",
+        "spam_filter_channel_id": null,
+        "create_voice_channel_id": null,
+        "server_log_channel_id": null,
+        "punish_log_channel_id": null,
+        "ticket_log_channel_id": null,
+        "command_channel_id": null,
+        "emoji_command_channel_id": null,
+        "ticket_panel_channel_id": null,
+        "ticket_panel_msg_id": null,
+        "ticket_count": 0
+    }
+}
